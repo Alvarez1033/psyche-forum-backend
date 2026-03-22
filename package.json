@@ -1,7 +1,7 @@
 {
-  "name": "researchsocial-backend",
+  "name": "psyche-forum-backend",
   "version": "1.0.0",
-  "description": "ResearchSocial — Full dynamic backend",
+  "description": "Psyche Forum \u2014 Node.js + PostgreSQL backend",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

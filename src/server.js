@@ -27,6 +27,25 @@ app.use('/api/', limiter);
 // Health
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
+// Public community stats
+app.get('/api/stats', async (req, res) => {
+  try {
+    const { query } = require('./db/pool');
+    const [users, posts, topics] = await Promise.all([
+      query('SELECT COUNT(*) as count FROM users'),
+      query("SELECT COUNT(*) as count FROM posts WHERE status='approved'"),
+      query('SELECT COUNT(*) as count FROM topics'),
+    ]);
+    const contributors = await query("SELECT COUNT(*) as count FROM users WHERE role IN ('contributor','author','editor','moderator','admin','superadmin')");
+    res.json({
+      members: parseInt(users.rows[0].count),
+      discussions: parseInt(posts.rows[0].count),
+      contributors: parseInt(contributors.rows[0].count),
+      topics: parseInt(topics.rows[0].count),
+    });
+  } catch(e) { res.json({ members:0, discussions:0, contributors:0, topics:0 }); }
+});
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
